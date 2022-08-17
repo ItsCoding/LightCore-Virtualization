@@ -20,7 +20,7 @@ pip install pyaudio
 
 #### Installation of GroundControl
 Download the installer from this [Link](https://groundcontrolcaster.s3.eu-west-2.amazonaws.com/CASTER_v2.0.9.pkg "Link")
-Install it and it should theoreticly work after restart. Maybe make sure that "Caster" is open and you chose the CASTER mic and audio output in the Mac Sound Settings. If you dont hear the sound, chose your Headphones underneath the Hearing symbol. In the column where the Headphon symbol is.
+Install it and it should theoreticly work after restart. Maybe make sure that "Caster" is open and you chose the "CASTER Stream Mix 1" mic and audio output in the Mac Sound Settings. If you dont hear the sound, chose your Headphones underneath the Hearing symbol. In the column where the Headphon symbol is.
 
 #### Usage
 Run the Virtualization first then the python script
