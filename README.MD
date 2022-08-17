@@ -31,3 +31,5 @@ yarn start
 cd {YOUR_GIT_FOLDER}/audio-reactive-led-strip/python
 python visualization.py
 ```
+
+Do to that the python project is yet not ready for rendering multiple independent led strips, the virtualization has two checkboxes. With that you can toggle wether the incomming frames should be applied to the triangle or middle strip.

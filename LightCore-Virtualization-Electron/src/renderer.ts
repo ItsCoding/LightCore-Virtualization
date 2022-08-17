@@ -21,8 +21,8 @@ const server = new Server();
 // Send a connection request to the server.
 
 // The client can also receive data from the server by reading from its socket.
-
-
+let applyToTriangleState = true;
+let applyToMiddleState = true;
 const drawTopLED = (stripIndex: number) => {
     const y = 0;
     for (let x = 0; x < LED_COUNT_TRIANGLE; x++) {
@@ -86,14 +86,30 @@ const drawMiddleLED = (stripIndex: number) => {
     }
 }
 
-const processData = (data: Array<Array<number>>) => {
-    for(let i = 0; i < LED_COUNT; i++) {
-        const ledID = `0-${i}`;
+const applyData = (stripIndex: number, data: Array<Array<number>>) => {
+    for (let i = 0; i < data[0].length; i++) {
+        const ledID = `${stripIndex}-${i}`;
         const panel = document.getElementById(ledID);
         if (panel) {
             panel.style.backgroundColor = `rgb(${data[0][i]}, ${data[1][i]}, ${data[2][i]})`;
         }
     }
+}
+
+const processData = (data: Array<Array<number>>) => {
+    if (applyToMiddleState) {
+        applyData(0, data);
+    }
+    if (applyToTriangleState) {
+        const shortData = [];
+        for (let i = 0; i < 3; i++) {
+            shortData.push(data[i].slice(20, 80));
+        }
+        applyData(1, shortData);
+        applyData(2, shortData);
+        applyData(3, shortData);
+    }
+
 }
 
 const initTCP = () => {
@@ -126,12 +142,80 @@ const initTCP = () => {
     });
 }
 
+const clearStrip = (stripIndex: number) => {
+    for (let i = 0; i < LED_COUNT; i++) {
+        const ledID = `${stripIndex}-${i}`;
+        const panel = document.getElementById(ledID);
+        if (panel) {
+            panel.style.backgroundColor = "black";
+        }
+    }
+}
+
+const initSettingsUI = () => {
+    console.log("Start Settings UI")
+    const applyToTriangleCheck = document.createElement("input");
+    applyToTriangleCheck.type = "checkbox";
+    applyToTriangleCheck.id = "applyToTriangle";
+    applyToTriangleCheck.checked = applyToTriangleState;
+    applyToTriangleCheck.style.display = "absolute"
+    applyToTriangleCheck.style.top = "10px";
+    applyToTriangleCheck.style.left = "20px";
+    applyToTriangleCheck.name = "applyToTriangle";
+    applyToTriangleCheck.onchange = () => {
+        const box: any = document.getElementById('applyToTriangle')
+        applyToTriangleState = box.checked;
+        if (!applyToTriangleState) {
+            clearStrip(1);
+            clearStrip(2);
+            clearStrip(3);
+        }
+        console.log(box.checked)
+    }
+    const applyToTriangleCheckLabel = document.createElement("label");
+    applyToTriangleCheckLabel.htmlFor = "applyToTriangle";
+    applyToTriangleCheckLabel.innerText = "Apply to Triangle";
+    applyToTriangleCheckLabel.style.fontFamily = "sans-serif",
+        applyToTriangleCheckLabel.style.color = "white";
+
+
+    const appleToMiddleCheck = document.createElement("input");
+    appleToMiddleCheck.type = "checkbox";
+    appleToMiddleCheck.id = "applyToMiddle";
+    appleToMiddleCheck.checked = applyToMiddleState;
+    appleToMiddleCheck.style.display = "absolute"
+    appleToMiddleCheck.style.top = "10px";
+    appleToMiddleCheck.style.left = "20px";
+    appleToMiddleCheck.name = "applyToMiddle";
+    appleToMiddleCheck.onchange = () => {
+        const box: any = document.getElementById('applyToMiddle')
+        applyToMiddleState = box.checked;
+        if (!applyToMiddleState) {
+            clearStrip(0);
+        }
+        // console.log(box.checked)
+    }
+    const applyToMiddleCheckLabel = document.createElement("label");
+    applyToMiddleCheckLabel.htmlFor = "applyToMiddle";
+    applyToMiddleCheckLabel.innerText = "Apply to Middle";
+    applyToMiddleCheckLabel.style.fontFamily = "sans-serif",
+        applyToMiddleCheckLabel.style.color = "white";
+
+
+
+    document.getElementById("virtBody").append(applyToTriangleCheck);
+    document.getElementById("virtBody").append(applyToTriangleCheckLabel);
+    document.getElementById("virtBody").append(appleToMiddleCheck);
+    document.getElementById("virtBody").append(applyToMiddleCheckLabel);
+}
+
 const initUI = () => {
     console.log("Start UI")
     drawMiddleLED(0);
     drawTopLED(1);
     drawLeftTriangleLED(2);
     drawRightTriangleLED(3);
+    initSettingsUI();
     initTCP();
 }
 
