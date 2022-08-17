@@ -1,7 +1,7 @@
-##LightCore-Virtualization
+## LightCore-Virtualization
 This project is to make the development on light effects more easy
 
-####Installation
+#### Installation
 For this to run you need NodeJs >= 16
 ```bash
 cd LightCore-Virtualization-Electron
