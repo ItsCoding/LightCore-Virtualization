@@ -147,7 +147,7 @@ const clearStrip = (stripIndex: number) => {
         const ledID = `${stripIndex}-${i}`;
         const panel = document.getElementById(ledID);
         if (panel) {
-            panel.style.backgroundColor = "black";
+            panel.style.backgroundColor = "rgb(50, 50, 50)";
         }
     }
 }
