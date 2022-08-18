@@ -26,7 +26,7 @@ let applyToMiddleState = true;
 const drawTopLED = (stripIndex: number) => {
     const y = 0;
     for (let x = 0; x < LED_COUNT_TRIANGLE; x++) {
-        const ledID = `${stripIndex}-${x}`;
+        const ledID = `${stripIndex}-${119 - x}`;
         const panel = document.createElement("div");
         panel.style.width = "8px";
         panel.style.height = "8px";
@@ -41,7 +41,7 @@ const drawTopLED = (stripIndex: number) => {
 
 const drawLeftTriangleLED = (stripIndex: number) => {
     for (let x = 0; x < LED_COUNT_TRIANGLE; x++) {
-        const ledID = `${stripIndex}-${x}`;
+        const ledID = `${stripIndex}-${59 - x}`;
         const panel = document.createElement("div");
         panel.style.width = "8px";
         panel.style.height = "8px";
@@ -56,7 +56,7 @@ const drawLeftTriangleLED = (stripIndex: number) => {
 
 const drawRightTriangleLED = (stripIndex: number) => {
     for (let x = 0; x < LED_COUNT_TRIANGLE; x++) {
-        const ledID = `${stripIndex}-${x}`;
+        const ledID = `${stripIndex}-${120 + x}`;
         const panel = document.createElement("div");
         panel.style.width = "8px";
         panel.style.height = "8px";
@@ -80,6 +80,7 @@ const drawMiddleLED = (stripIndex: number) => {
         panel.style.position = "absolute";
         panel.style.top = `${y + BORDEROFFSET}px`;
         panel.style.left = `${x * 10 + BORDEROFFSET}px`;
+        panel.style.zIndex = "999";
         panel.id = ledID;
         document.getElementById("virtBody").append(panel);
         console.log(`Added ${ledID}`);
@@ -93,22 +94,30 @@ const applyData = (stripIndex: number, data: Array<Array<number>>) => {
         if (panel) {
             panel.style.backgroundColor = `rgb(${data[0][i]}, ${data[1][i]}, ${data[2][i]})`;
         }
+        if([""].includes(ledID))
     }
 }
 
-const processData = (data: Array<Array<number>>) => {
-    if (applyToMiddleState) {
-        applyData(0, data);
-    }
-    if (applyToTriangleState) {
-        const shortData = [];
-        for (let i = 0; i < 3; i++) {
-            shortData.push(data[i].slice(20, 80));
-        }
-        applyData(1, shortData);
-        applyData(2, shortData);
-        applyData(3, shortData);
-    }
+type LightData = {
+    [key: string]: Array<Array<number>>
+}
+
+const processData = (data:LightData ) => {
+    Object.keys(data).forEach((key:string) => {
+        applyData(parseInt(key), data[key]);
+    })
+    // if (applyToMiddleState) {
+    //     applyData(0, data);
+    // }
+    // if (applyToTriangleState) {
+    //     const shortData = [];
+    //     for (let i = 0; i < 3; i++) {
+    //         shortData.push(data[i].slice(20, 80));
+    //     }
+    //     applyData(1, shortData);
+    //     applyData(2, shortData);
+    //     applyData(3, shortData);
+    // }
 
 }
 
@@ -143,7 +152,7 @@ const initTCP = () => {
 }
 
 const clearStrip = (stripIndex: number) => {
-    for (let i = 0; i < LED_COUNT; i++) {
+    for (let i = 0; i < LED_COUNT_TRIANGLE * 3; i++) {
         const ledID = `${stripIndex}-${i}`;
         const panel = document.getElementById(ledID);
         if (panel) {
@@ -167,8 +176,6 @@ const initSettingsUI = () => {
         applyToTriangleState = box.checked;
         if (!applyToTriangleState) {
             clearStrip(1);
-            clearStrip(2);
-            clearStrip(3);
         }
         console.log(box.checked)
     }
@@ -213,8 +220,8 @@ const initUI = () => {
     console.log("Start UI")
     drawMiddleLED(0);
     drawTopLED(1);
-    drawLeftTriangleLED(2);
-    drawRightTriangleLED(3);
+    drawLeftTriangleLED(1);
+    drawRightTriangleLED(1);
     initSettingsUI();
     initTCP();
 }
