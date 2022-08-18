@@ -94,7 +94,6 @@ const applyData = (stripIndex: number, data: Array<Array<number>>) => {
         if (panel) {
             panel.style.backgroundColor = `rgb(${data[0][i]}, ${data[1][i]}, ${data[2][i]})`;
         }
-        if([""].includes(ledID))
     }
 }
 
