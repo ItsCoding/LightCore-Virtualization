@@ -221,7 +221,7 @@ const initUI = () => {
     drawTopLED(1);
     drawLeftTriangleLED(1);
     drawRightTriangleLED(1);
-    initSettingsUI();
+    // initSettingsUI();
     initTCP();
 }
 
