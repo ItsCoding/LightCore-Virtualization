@@ -7,11 +7,11 @@
 import { Socket, Server } from "net";
 
 // needed in the renderer process.
-const LED_COUNT = 100;
-const LED_COUNT_TRIANGLE = 60;
+const LED_COUNT = 300;
+const LED_COUNT_TRIANGLE = 180;
 // const LEDSTRIPS_COUNT= 4;
 const BORDEROFFSET = 50;
-
+const BORDEROFFSETTOP = 200;
 // The port on which the server is listening.
 const port = 8080;
 
@@ -26,14 +26,14 @@ let applyToMiddleState = true;
 const drawTopLED = (stripIndex: number) => {
     const y = 0;
     for (let x = 0; x < LED_COUNT_TRIANGLE; x++) {
-        const ledID = `${stripIndex}-${119 - x}`;
+        const ledID = `${stripIndex}-${180 + x}`;
         const panel = document.createElement("div");
         panel.style.width = "8px";
         panel.style.height = "8px";
         panel.style.backgroundColor = "green";
         panel.style.position = "absolute";
-        panel.style.top = `${y + BORDEROFFSET}px`;
-        panel.style.left = `${x * 10 + BORDEROFFSET + 200}px`;
+        panel.style.top = `${y + BORDEROFFSETTOP}px`;
+        panel.style.left = `${x * 10 + BORDEROFFSET + 600}px`;
         panel.id = ledID;
         document.getElementById("virtBody").append(panel);
     }
@@ -41,14 +41,14 @@ const drawTopLED = (stripIndex: number) => {
 
 const drawLeftTriangleLED = (stripIndex: number) => {
     for (let x = 0; x < LED_COUNT_TRIANGLE; x++) {
-        const ledID = `${stripIndex}-${59 - x}`;
+        const ledID = `${stripIndex}-${179 - x}`;
         const panel = document.createElement("div");
         panel.style.width = "8px";
         panel.style.height = "8px";
         panel.style.backgroundColor = "blue";
         panel.style.position = "absolute";
-        panel.style.top = `${(x * 10 * 86 / 100) + BORDEROFFSET}px`;
-        panel.style.left = `${(x * 10 * 50 / 100) + BORDEROFFSET + 200}px`;
+        panel.style.top = `${(x * 10 * 86 / 100) + BORDEROFFSETTOP}px`;
+        panel.style.left = `${(x * 10 * 50 / 100) + BORDEROFFSET + 600}px`;
         panel.id = ledID;
         document.getElementById("virtBody").append(panel);
     }
@@ -56,21 +56,21 @@ const drawLeftTriangleLED = (stripIndex: number) => {
 
 const drawRightTriangleLED = (stripIndex: number) => {
     for (let x = 0; x < LED_COUNT_TRIANGLE; x++) {
-        const ledID = `${stripIndex}-${120 + x}`;
+        const ledID = `${stripIndex}-${360 + x}`;
         const panel = document.createElement("div");
         panel.style.width = "8px";
         panel.style.height = "8px";
         panel.style.backgroundColor = "red";
         panel.style.position = "absolute";
-        panel.style.top = `${(x * 10 * 86 / 100) + BORDEROFFSET}px`;
-        panel.style.left = `${800 - (x * 10 * 50 / 100) + BORDEROFFSET}px`;
+        panel.style.top = `${(x * 10 * 86 / 100) + BORDEROFFSETTOP}px`;
+        panel.style.left = `${2400 - (x * 10 * 50 / 100) + BORDEROFFSET}px`;
         panel.id = ledID;
         document.getElementById("virtBody").append(panel);
     }
 }
 
 const drawMiddleLED = (stripIndex: number) => {
-    const y = (300 * 86 / 100) - 40;
+    const y = (600 * 86 / 100) - 80;
     for (let x = 0; x < LED_COUNT; x++) {
         const ledID = `${stripIndex}-${x}`;
         const panel = document.createElement("div");
@@ -78,7 +78,7 @@ const drawMiddleLED = (stripIndex: number) => {
         panel.style.height = "8px";
         panel.style.backgroundColor = "purple";
         panel.style.position = "absolute";
-        panel.style.top = `${y + BORDEROFFSET}px`;
+        panel.style.top = `${y + BORDEROFFSETTOP}px`;
         panel.style.left = `${x * 10 + BORDEROFFSET}px`;
         panel.style.zIndex = "999";
         panel.id = ledID;
