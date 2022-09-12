@@ -9,6 +9,7 @@ import { Socket, Server } from "net";
 // needed in the renderer process.
 const LED_COUNT = 300;
 const LED_COUNT_TRIANGLE = 180;
+const LED_COUNT_STRIP1 = 100;
 // const LEDSTRIPS_COUNT= 4;
 const BORDEROFFSET = 50;
 const BORDEROFFSETTOP = 200;
@@ -66,6 +67,24 @@ const drawRightTriangleLED = (stripIndex: number) => {
         panel.style.left = `${2400 - (x * 10 * 50 / 100) + BORDEROFFSET}px`;
         panel.id = ledID;
         document.getElementById("virtBody").append(panel);
+    }
+}
+
+const drawFirstStrip = (stripIndex: number) => {
+    const y = 1700;
+    for (let x = 0; x < LED_COUNT_STRIP1; x++) {
+        const ledID = `${stripIndex}-${x}`;
+        const panel = document.createElement("div");
+        panel.style.width = "28px";
+        panel.style.height = "8px";
+        panel.style.backgroundColor = "orange";
+        panel.style.position = "absolute";
+        panel.style.top = `${y + BORDEROFFSETTOP}px`;
+        panel.style.left = `${x * 30 + BORDEROFFSET}px`;
+        panel.style.zIndex = "999";
+        panel.id = ledID;
+        document.getElementById("virtBody").append(panel);
+        console.log(`Added ${ledID}`);
     }
 }
 
@@ -221,6 +240,7 @@ const initUI = () => {
     drawTopLED(1);
     drawLeftTriangleLED(1);
     drawRightTriangleLED(1);
+    drawFirstStrip(2);
     // initSettingsUI();
     initTCP();
 }
