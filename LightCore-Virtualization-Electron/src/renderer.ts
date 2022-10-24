@@ -9,9 +9,9 @@ import { Socket, Server } from "net";
 // needed in the renderer process.
 const LED_COUNT = 300;
 const LED_COUNT_TRIANGLE = 180;
-const LED_COUNT_STRIP1 = 100;
+const LED_COUNT_STRIP1 = 50;
 // const LEDSTRIPS_COUNT= 4;
-const BORDEROFFSET = 50;
+const BORDEROFFSET = 100;
 const BORDEROFFSETTOP = 200;
 // The port on which the server is listening.
 const port = 8080;
@@ -71,16 +71,37 @@ const drawRightTriangleLED = (stripIndex: number) => {
 }
 
 const drawFirstStrip = (stripIndex: number) => {
-    const y = 1700;
+    const staticX = 3150;
     for (let x = 0; x < LED_COUNT_STRIP1; x++) {
+        const y = x 
         const ledID = `${stripIndex}-${x}`;
         const panel = document.createElement("div");
-        panel.style.width = "28px";
-        panel.style.height = "8px";
+        panel.style.width = "8px";
+        panel.style.height = "28px";
         panel.style.backgroundColor = "orange";
         panel.style.position = "absolute";
-        panel.style.top = `${y + BORDEROFFSETTOP}px`;
-        panel.style.left = `${x * 30 + BORDEROFFSET}px`;
+        panel.style.top = `${y * 30 + BORDEROFFSETTOP}px`;
+        panel.style.left = `${staticX}px`;
+        panel.style.zIndex = "999";
+        panel.id = ledID;
+        document.getElementById("virtBody").append(panel);
+        console.log(`Added ${ledID}`);
+    }
+}
+
+const drawSecondStrip = (stripIndex: number) => {
+    // const y = 1700;
+    const staticX = 50;
+    for (let x = 0; x < LED_COUNT_STRIP1; x++) {
+        const y = x 
+        const ledID = `${stripIndex}-${x}`;
+        const panel = document.createElement("div");
+        panel.style.width = "8px";
+        panel.style.height = "28px";
+        panel.style.backgroundColor = "orange";
+        panel.style.position = "absolute";
+        panel.style.top = `${y * 30 + BORDEROFFSETTOP}px`;
+        panel.style.left = `${staticX}px`;
         panel.style.zIndex = "999";
         panel.id = ledID;
         document.getElementById("virtBody").append(panel);
@@ -241,6 +262,7 @@ const initUI = () => {
     drawLeftTriangleLED(1);
     drawRightTriangleLED(1);
     drawFirstStrip(2);
+    drawSecondStrip(3);
     // initSettingsUI();
     initTCP();
 }
