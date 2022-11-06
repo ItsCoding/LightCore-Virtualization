@@ -140,8 +140,22 @@ const applyData = (stripIndex: number, data: Array<Array<number>>) => {
 type LightData = {
     [key: string]: Array<Array<number>>
 }
+let lastTimeStamp = 0;
+let dataCount = 0;
+
+const makeFPS = () => {
+    dataCount += 1;
+    if(lastTimeStamp + 1000 < Date.now()) {
+        lastTimeStamp = Date.now();
+        console.log(`FPS: ${dataCount}`);
+        window.document.title = `FPS: ${dataCount}`;
+        dataCount = 0;
+    }
+}
+
 
 const processData = (data:LightData ) => {
+    makeFPS();
     Object.keys(data).forEach((key:string) => {
         applyData(parseInt(key), data[key]);
     })
