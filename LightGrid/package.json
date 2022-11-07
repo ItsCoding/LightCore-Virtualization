@@ -24,8 +24,10 @@
     "@electron-forge/maker-squirrel": "^6.0.0",
     "@electron-forge/maker-zip": "^6.0.0",
     "@electron-forge/plugin-webpack": "^6.0.0",
+    "@types/lodash": "^4.14.188",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
+    "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "@vercel/webpack-asset-relocator-loader": "1.7.3",
@@ -41,16 +43,21 @@
     "typescript": "~4.5.4"
   },
   "dependencies": {
+    "@electron/remote": "^2.0.8",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@fontsource/roboto": "^4.5.8",
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.12",
     "@mui/x-data-grid": "^5.17.10",
+    "bufferutil": "^4.0.7",
     "electron-squirrel-startup": "^1.0.0",
+    "lodash": "^4.17.21",
     "notistack": "^2.0.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "uuid": "^9.0.0"
+    "utf-8-validate": "^5.0.10",
+    "uuid": "^9.0.0",
+    "ws": "^8.11.0"
   }
 }

@@ -8,18 +8,17 @@ import { Theme } from "./system/Theme"
 
 export const App = () => {
     return (
-        <>
+        <div>
             <SnackbarProvider anchorOrigin={{
                 horizontal: 'right',
-                vertical: 'top',
+                vertical: 'bottom',
             }} maxSnack={10}>
                 <ThemeProvider theme={Theme}>
                     <CssBaseline />
-                    <Header />
                     <DesignerPage />
                 </ThemeProvider>
             </SnackbarProvider>
 
-        </>
+        </div>
     )
 }

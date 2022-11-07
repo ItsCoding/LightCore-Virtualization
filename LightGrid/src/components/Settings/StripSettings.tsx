@@ -3,6 +3,7 @@ import { Strip } from "../../classes/Strips/Strip";
 import ColorizeIcon from '@mui/icons-material/Colorize';
 import { Point } from "../../classes/Point";
 import { useState, useEffect } from "react";
+import { useSnackbar } from "notistack";
 export type StageViewerProps = {
     selectedStrip: Strip | null;
     changeSelectedStrip: (newStrip: Strip) => void;
@@ -61,7 +62,7 @@ export const StripSettings = ({ selectedStrip, changeSelectedStrip }: StageViewe
 
     const [posX, setPosX] = useState<string>();
     const [posY, setPosY] = useState<string>();
-
+    const { enqueueSnackbar } = useSnackbar();
     useEffect(() => {
         if (selectedStrip) {
             setPosX(selectedStrip.startPoint.x.toString());
@@ -93,11 +94,30 @@ export const StripSettings = ({ selectedStrip, changeSelectedStrip }: StageViewe
     }
 
     const onAngleChange = (value: number | number[]) => {
+        if (value > 180 || value < -180) {
+            enqueueSnackbar("Angle must be between -180° and 180°", { variant: "error" });
+            return;
+        }
         if (selectedStrip) {
             selectedStrip.rotate(value as number);
             changeSelectedStrip(selectedStrip);
         }
     }
+
+    const StartEnd = () => {
+        const startReal = selectedStrip.getPositionAt(0)[0]
+        const endRealData = selectedStrip.getPositionAt(selectedStrip.ledCount - 1)
+        const endReal = endRealData[endRealData.length - 1]
+        return (<Grid container columnSpacing={2} rowSpacing={2}>
+            <Grid item xs={6}>
+                <p>Start X/Y: {Math.round(startReal.x * 100) / 100} / {Math.round(startReal.y * 100) / 100} </p>
+            </Grid>
+            <Grid item xs={6}>
+                <p>End X/Y: {Math.round(endReal.x * 100) / 100} / {Math.round(endReal.y * 100) / 100} </p>
+            </Grid>
+        </Grid>)
+    }
+
     return (
         <div style={{
             marginTop: 10,
@@ -110,7 +130,7 @@ export const StripSettings = ({ selectedStrip, changeSelectedStrip }: StageViewe
                 paddingBottom: "20px"
             }}>
                 <Typography variant="h6">
-                    Strip settings {selectedStrip ? `(${selectedStrip.id})` : ""}
+                    Strip settings
                 </Typography>
                 <Divider />
                 {selectedStrip ?
@@ -121,7 +141,26 @@ export const StripSettings = ({ selectedStrip, changeSelectedStrip }: StageViewe
                         <Grid item xs={6}>
                             <TextField onChange={onYChange} type={"number"} id="standard-basic" label="Position-Y" variant="standard" fullWidth value={posY} />
                         </Grid>
+                        <Grid item xs={6}>
+                            <p>End X: {Math.round(selectedStrip.endPoint.x * 100) / 100} </p>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <p>End Y: {Math.round(selectedStrip.endPoint.y * 100) / 100} </p>
+                        </Grid>
                         <Grid item xs={12}>
+                            <Divider />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography variant="caption">
+                                Pixel Coordinates
+                            </Typography>
+                            <StartEnd />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Divider />
+                        </Grid>
+
+                        <Grid item xs={8}>
                             <div style={{
                                 paddingLeft: 20,
                                 paddingRight: 20,
@@ -131,13 +170,20 @@ export const StripSettings = ({ selectedStrip, changeSelectedStrip }: StageViewe
                                     value={selectedStrip.getStripAngle}
                                     defaultValue={selectedStrip.getStripAngle}
                                     getAriaValueText={valuetext}
-                                    step={1}
                                     min={-180}
                                     max={180}
                                     valueLabelDisplay="auto"
                                     marks={marks}
                                     onChange={(e, v) => onAngleChange(v)}
                                 />
+                            </div>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <div style={{
+                                paddingLeft: 20,
+                                paddingRight: 20,
+                            }}>
+                                <TextField onChange={(e) => onAngleChange(parseInt(e.target.value))} type={"number"} id="standard-basic" label="Position-Y" variant="standard" fullWidth value={selectedStrip.getStripAngle} />
                             </div>
                         </Grid>
                     </Grid> : <NoStrip />}

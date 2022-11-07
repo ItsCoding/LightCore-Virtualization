@@ -11,23 +11,39 @@ export type StripManagerProps = {
     strips: Strip[];
     setStrips: (newStrips: Strip[]) => void;
     setSelectedStrip: (index: number) => void;
+    selectedStrip: number;
 }
 
 const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 90, editable: true },
+    { field: 'lcid', headerName: 'LC-ID', width: 60, editable: true, type: "number", },
+    {
+        field: 'stripName',
+        headerName: 'Name',
+        width: 150,
+        type: "text",
+        editable: true,
+    },
     {
         field: 'ledCount',
         headerName: 'LED Count',
-        width: 200,
+        width: 100,
+        type: "number",
         editable: true,
     },
     {
         field: 'getPhysicalLength',
         headerName: 'Physical Length',
-        width: 150,
+        width: 130,
         editable: true,
+        type: "number",
         valueFormatter: (params) =>
             `${params.value} cm`,
+    }, {
+        field: 'offset',
+        headerName: 'LED Offset',
+        width: 100,
+        editable: true,
+        type: "number",
     },
 ];
 
@@ -38,96 +54,90 @@ const randomString = (length: number) => {
     return result;
 }
 
-export const StripManager = ({ strips, setStrips, setSelectedStrip }: StripManagerProps) => {
+export const StripManager = ({ strips, setStrips, setSelectedStrip, selectedStrip }: StripManagerProps) => {
     const { enqueueSnackbar } = useSnackbar();
-    const [selectedRows, setSelectedRows] = useState<number[]>([]);
     const addNewStrip = () => {
         const newStrips = [...strips];
-        newStrips.push(new StraightStrip(randomString(5), new Point(0, 0), 100, 100));
+        newStrips.push(new StraightStrip("-1", new Point(0, 0), 100, 100));
         setStrips(newStrips);
         enqueueSnackbar(`New Strip Added with ID ${strips.length}`, { variant: "success" });
     }
 
     const removeSelectedStrips = () => {
+        if (selectedStrip < 0) {
+            enqueueSnackbar("No Strip Selected", { variant: "warning" });
+            return;
+        }
         const newStrips = [...strips];
-        selectedRows.forEach((row) => {
-            newStrips.splice(row, 1);
-        })
+        newStrips.splice(selectedStrip, 1);
         setStrips(newStrips);
+        setSelectedStrip(-1);
         enqueueSnackbar(`Strips Removed`, { variant: "success" });
     }
 
 
-    const Footer = (
-        <>
-            <Button onClick={addNewStrip}>New</Button>
-            <Button color="error" onClick={removeSelectedStrips}>Delete</Button>
-        </>
-    )
 
     return (<>
-        <div style={{
-            marginTop: 10,
-            height: "400px"
-        }}>
-            <Paper sx={{
-                width: "100%",
-                height: "100%",
-                paddingLeft: "10px",
-                paddingRight: "10px",
-                paddingBottom: "50px"
-            }}>
-                <Typography variant="h6">
-                    Strips
-                </Typography>
-                <Divider />
-                <DataGrid
-                    onRowClick={(e) => {
-                        const index = strips.findIndex((strip) => strip.id === e.row.id);
-                        if (index !== -1) {
-                            setSelectedStrip(index);
-                        }
-                    }}
-                    rows={strips}
-                    // rows={[]}
-                    columns={columns}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
-                    components={{
-                        Footer: () => Footer
-                    }}
-                    onSelectionModelChange={(newSelection) => {
-                        setSelectedRows(newSelection as number[]);
-                        console.log(newSelection);
-                    }}
-                    checkboxSelection
-                    disableSelectionOnClick
-                    onProcessRowUpdateError={(params) => console.log(params)}
-                    onCellEditCommit={(params) => {
-                        //Get index of the strip that was edited
-                        console.log("OLD: ", params)
-                        const index = strips.findIndex(strip => strip.id === params.id);
-                        const newStrips = [...strips];
-                        const strip = newStrips[index];
-                        if (params.field === "ledCount") {
-                            strip.ledCount = parseInt(params.value as string);
-                        }
-                        else if (params.field === "getPhysicalLength") {
-                            strip.setPhysicalLength(parseInt(params.value as string));
-                        }
-                        else if (params.field === "id" && params.value.length > 0 && params.value !== strip.id) {
-                            if (strips.findIndex(strip => strip.id === params.value) !== -1) {
-                                enqueueSnackbar("Strip ID already exists", { variant: "error" });
-                            } else {
-                                strip.id = params.value as string;
-                            }
-                        }
-                        console.log(index, strip)
-                        setStrips(newStrips);
-                    }}
-                />
-            </Paper>
 
-        </div>
+        <Paper sx={{
+            width: "100%",
+            paddingLeft: "10px",
+            paddingRight: "10px",
+            paddingBottom: "10px",
+            marginTop: "10px"
+        }}>
+            <Typography variant="h6">
+                Strips
+            </Typography>
+            <Divider />
+            <DataGrid
+                style={{ minHeight: 400, width: '100%' }}
+                onRowClick={(e) => {
+                    const index = strips.findIndex((strip) => strip.id === e.row.id);
+                    if (index !== -1) {
+                        setSelectedStrip(index);
+                    }
+                }}
+                rows={strips}
+                // rows={[]}
+                columns={columns}
+                pageSize={10}
+                disableSelectionOnClick
+                getRowClassName={(params) => {
+                    if (params.row.id === strips[selectedStrip]?.id) {
+                        return "selected-row";
+                    }
+                }}
+                onProcessRowUpdateError={(params) => console.log(params)}
+                onCellEditCommit={(params) => {
+                    //Get index of the strip that was edited
+                    const index = strips.findIndex(strip => strip.id === params.id);
+                    const newStrips = [...strips];
+                    const strip = newStrips[index];
+                    if (params.field === "ledCount") {
+                        strip.ledCount = parseInt(params.value as string);
+                    }
+                    else if (params.field === "getPhysicalLength") {
+                        strip.setPhysicalLength(parseInt(params.value as string));
+                    }
+                    else if (params.field === "lcid") {
+                        strip.lcid = params.value as string;
+                    }
+                    else if (params.field === "offset") {
+                        strip.offset = params.value as number;
+                    }
+                    else if (params.field === "stripName") {
+                        strip.stripName = params.value as string;
+                    }
+                    setStrips(newStrips);
+                }}
+            />
+            <div style={{
+                paddingTop: "10px",
+            }}>
+                <Button onClick={addNewStrip}>New</Button>
+                <Button color="error" onClick={removeSelectedStrips}>Delete</Button>
+            </div>
+        </Paper>
     </>)
 }
