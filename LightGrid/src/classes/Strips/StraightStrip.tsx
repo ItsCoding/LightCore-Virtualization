@@ -14,6 +14,7 @@ export class StraightStrip implements StripBase {
     public scaleFactor = 1;
     public maxStripDensity = 60;
     public stripName = "Straight Strip";
+    public zIndex = 1;
     get startPoint(): Point {
         return this.start;
     }
@@ -90,7 +91,6 @@ export class StraightStrip implements StripBase {
             ledPosition.y += ((ledSize * index) + i) * Math.sin(angle * Math.PI / 180);
             points.push(ledPosition);
         }
-        console.log("Points: ", points);
         return points;
     }
 

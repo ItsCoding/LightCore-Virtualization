@@ -42,7 +42,7 @@ export const StageViewer = ({ strips, onStripClick, selectedStrip, globalScaling
                                             borderStyle: "solid",
                                             borderColor: selectedStrip === stripIndex ? "rgba(9, 13, 220, 0.52)" : "black",
                                         }),
-                                        zIndex: 1
+                                        zIndex: strip.zIndex
                                     }}
                                     // onDragStart={(e) => {
                                     //     console.log("START", e);

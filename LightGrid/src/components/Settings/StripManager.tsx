@@ -44,6 +44,12 @@ const columns: GridColDef[] = [
         width: 100,
         editable: true,
         type: "number",
+    }, {
+        field: 'zIndex',
+        headerName: 'zIndex',
+        width: 100,
+        editable: true,
+        type: "number",
     },
 ];
 
@@ -58,7 +64,16 @@ export const StripManager = ({ strips, setStrips, setSelectedStrip, selectedStri
     const { enqueueSnackbar } = useSnackbar();
     const addNewStrip = () => {
         const newStrips = [...strips];
-        newStrips.push(new StraightStrip("-1", new Point(0, 0), 100, 100));
+
+        //find highest lcid
+        let highestLcid = 0;
+        newStrips.forEach(strip => {
+            if (parseInt(strip.lcid) > highestLcid) {
+                highestLcid = parseInt(strip.lcid);
+            }
+        })
+
+        newStrips.push(new StraightStrip(`${highestLcid + 1}`, new Point(0, 0), 100, 100));
         setStrips(newStrips);
         enqueueSnackbar(`New Strip Added with ID ${strips.length}`, { variant: "success" });
     }
@@ -128,6 +143,9 @@ export const StripManager = ({ strips, setStrips, setSelectedStrip, selectedStri
                     }
                     else if (params.field === "stripName") {
                         strip.stripName = params.value as string;
+                    }
+                    else if (params.field === "zIndex") {
+                        strip.zIndex = params.value as number;
                     }
                     setStrips(newStrips);
                 }}
